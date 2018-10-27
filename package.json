@@ -2,7 +2,7 @@
   "name": "facerecognitionbrain",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://Ravnicore.github.io/Face-API-Recognition",
+  "homepage": "http://Ravnicore.github.io/Face-Recognition",
   "dependencies": {
     "clarifai": "^2.8.1",
     "react": "^16.5.2",
