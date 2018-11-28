@@ -35,6 +35,26 @@ class SignIn extends React.Component {
 			})
 	}
 
+	handleKeyPress = (event) => {
+	  if(event.key === 'Enter'){
+	    fetch('https://shrouded-tundra-61121.herokuapp.com/signin', {
+			method: 'post',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({
+				email: this.state.signInEmail,
+				password: this.state.signInPassword,
+			})
+		})
+			.then(response => response.json())
+			.then(user => {
+				if (user.id){
+					this.props.loadUser(user);
+          			this.props.onRouteChange('home');					
+				}
+			})
+	  }
+	}
+
 	render () {
 		const { onRouteChange } = this.props;
 		return (
@@ -62,6 +82,7 @@ class SignIn extends React.Component {
 					        	name="password"  
 					        	id="password" 
 					        	onChange={this.onPasswordChange} 
+					        	onKeyPress={this.handleKeyPress}
 					        />
 					      </div>
 					    </fieldset>

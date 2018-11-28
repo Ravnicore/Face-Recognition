@@ -41,6 +41,27 @@ class Register extends React.Component{
 			})
 	}
 
+	handleKeyPress = (event) => {
+		if(event.key === 'Enter'){
+			fetch('https://shrouded-tundra-61121.herokuapp.com/register', {
+			method: 'post',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({
+				email: this.state.email,
+				password: this.state.password,
+				name: this.state.name,
+			})
+		})
+			.then(response => response.json())
+			.then(user => {
+				if (user.id){
+					this.props.loadUser(user)
+					this.props.onRouteChange('home');					
+				}
+			})
+		}
+	}
+
 	render() {
 		return (
 			<div>
@@ -77,6 +98,7 @@ class Register extends React.Component{
 						        name="password"  
 						        id="password" 
 						        onChange={this.onPasswordChange}
+						        onKeyPress={this.handleKeyPress}
 						    />
 					      </div>
 					    </fieldset>

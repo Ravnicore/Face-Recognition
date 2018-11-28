@@ -9,6 +9,7 @@ import Rank from './Components/Rank/Rank.js';
 import ImageLinkForm from './Components/ImageLinkForm/ImageLinkForm.js';
 import './App.css';
 
+var myBoxes = [];
 const initialState = {
   input: '',
   imageUrl: '',
@@ -40,24 +41,31 @@ class App extends Component {
     }})
   }
 
-  calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height),
+  calculateFacesLocations = (data) => {
+    myBoxes = [];
+    for (let k=0; k < data.outputs[0].data.regions.length; k++){
+      var clarifaiFace = data.outputs[0].data.regions[k].region_info.bounding_box;
+      const image = document.getElementById('inputimage');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      myBoxes.push(
+        <div key={k} className='bounding-box' style={{
+          top: clarifaiFace.top_row * height,
+          right: width - (clarifaiFace.right_col * width),
+          bottom: height - (clarifaiFace.bottom_row * height),
+          left: clarifaiFace.left_col * width,
+        }}>
+        </div>
+      )
     }
+    this.setState({ box: {
+       myBoxes 
+      }
+    })
   }
 
 
 
-  displayFaceBox = (box) => {
-    this.setState({box: box})
-  }
 
   onInputChange = (event) => {
     this.setState({input: event.target.value});
@@ -88,7 +96,7 @@ class App extends Component {
         })
         .catch(console.log)
       }
-      this.displayFaceBox(this.calculateFaceLocation(response))
+      this.calculateFacesLocations(response)
       })
     .catch(err => console.log(err)); 
   }
@@ -103,7 +111,7 @@ class App extends Component {
   }
 
   render() {
-    const {isSignedIn, imageUrl, route, box } = this.state;
+    const {isSignedIn, imageUrl, route, box} = this.state;
     return (
       <div className="App">
         <ParticlesFix />
@@ -119,7 +127,7 @@ class App extends Component {
                 onInputChange={this.onInputChange} 
                 onPictureSubmit={this.onPictureSubmit}
               />
-              <FaceRecognition box={ box } imageUrl={ imageUrl }/>
+              <FaceRecognition box = { box } imageUrl={ imageUrl }/>
             </div>
           : (
               this.state.route ==='signin'
